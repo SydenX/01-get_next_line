@@ -19,6 +19,7 @@ char	*get_next_line(int fd)
 	char		*str;
 	static int	readable = 0;
 	static int	i = 0;
+	static int	times
 	int			j;
 
 	if (fd == -1)
