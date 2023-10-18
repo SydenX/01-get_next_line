@@ -40,13 +40,13 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 	return (ft_strlen(src));
 }
 
-char	*ft_strjoin(const char *s1, const char *s2, int max)
+char	*ft_strnjoin(const char *s1, const char *s2, int max)
 {
 	char	*str;
 	int		i;
 	int		j;
 
-	if ((int)ft_strlen(s2) < max)
+	if (ft_strlen(s2) < max)
 		str = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	else
 		str = malloc((ft_strlen(s1) + max + 1) * sizeof(char));
@@ -64,7 +64,7 @@ char	*ft_strjoin(const char *s1, const char *s2, int max)
 		str[i + j] = s2[j];
 		j++;
 	}
-	//str[i + j] = 0;
+	str[i + j] = 0;
 	return (str);
 }
 
@@ -83,6 +83,7 @@ int	ft_file_check(int fd, char *buff)
 int	ft_readline(int fd, char *buff)
 {
 	int	readable;
+	int	i;
 
 	readable = read(fd, buff, BUFFER_SIZE);
 	if (readable < 1)
@@ -95,40 +96,33 @@ char	*ft_str(int fd, char *buff, char *str, int start)
 	static int 	j = 0;
 	int			i;
 
-	i = 0;
-	// printf("%d\n", start);
-	// if (ft_readline(fd, buff) == -1)
-	// 	return (NULL);
+	i = start;
+	if (ft_readline(fd, buff) == -1)
+		return (NULL);
 	while (buff[i] != 0 && buff[i] != '\n')
 		i++;
-	if (str == NULL)
-	{
-		str = malloc((1) * sizeof(char));
-		//printf("AAA");
-		str[0] = 0;
-		if (str == NULL)
-			return (NULL);
-	}
-	// printf("%s\n", str);
-	// printf("%s\n", buff);
-	str = ft_strjoin(str, buff, i + 1);
+	// if (str == NULL)
+	// {
+	// 	str = malloc((i + 1) * sizeof(char));
+	// 	if (str == NULL)
+	// 		return (NULL);
+	// }
+	str = ft_strnjoin(str, buff, i + 1);
 	//ft_strlcpy(str, buff, i + 1);
 	j++;
-	//printf("%c", buff[i]);
 	if (buff[i] == '\n')
-		return (str);
-	// else if (ft_readline(fd, buff) != -1)
-	// 	ft_str(fd, buff, str, start + BUFFER_SIZE);
-	else if (read(fd, buff, BUFFER_SIZE) < 1)
-		return (NULL);
+		str[ft_strlen(str)] = 0;
 	else
-		return (ft_str(fd, buff, str, start + BUFFER_SIZE));
+		ft_str(fd, buff, str, start + i + 1);
+	return (str);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*buff = 0;
-	static char		*str;
+	char		readable = 0;
+	int			i;
+	char		*str;
 
 	if (!ft_file_check(fd, buff))
 		return (NULL);
@@ -139,13 +133,7 @@ char	*get_next_line(int fd)
 			return (NULL);
 		buff[BUFFER_SIZE] = 0;
 	}
-	if(ft_readline(fd, buff) == -1)
-	{
-		free(buff);
-		buff = NULL;
-		return (NULL);
-	}
-	str = ft_str(fd, buff, NULL, BUFFER_SIZE);
+	str = ft_str(fd, buff, NULL, 0);
 	if (str == NULL)
 	{
 		free(buff);
@@ -222,13 +210,13 @@ char	*get_next_line(int fd)
 // 	return (str);
 // }
 
-// #include <stdio.h>
-// int	main(int argc, char *argv[]){
-// 	int	fd = open(argv[1], O_RDONLY, 0);
-// 	int i = 0;
-// 	while (i < 1){
-// 		printf("%s", get_next_line(fd));
-// 		i++;
-// 	}
-// 	return (argc);
-// }
+#include <stdio.h>
+int	main(int argc, char *argv[]){
+	int	fd = open(argv[1], O_RDONLY, 0);
+	int i = 0;
+	while (i < 1){
+		printf("%s", get_next_line(fd));
+		i++;
+	}
+	return (argc);
+}
