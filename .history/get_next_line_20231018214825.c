@@ -109,7 +109,7 @@ char	*ft_str(int fd, char *buff, char *str, int start)
 	}
 	// printf("%s\n", str);
 	// printf("%s\n", buff);
-	str = ft_strjoin(str, buff, i);
+	str = ft_strjoin(str, buff, i + 1);
 	//ft_strlcpy(str, buff, i + 1);
 	j++;
 	//printf("%c", buff[i]);

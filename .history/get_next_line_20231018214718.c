@@ -109,7 +109,7 @@ char	*ft_str(int fd, char *buff, char *str, int start)
 	}
 	// printf("%s\n", str);
 	// printf("%s\n", buff);
-	str = ft_strjoin(str, buff, i);
+	str = ft_strjoin(str, buff, i + 1);
 	//ft_strlcpy(str, buff, i + 1);
 	j++;
 	//printf("%c", buff[i]);
@@ -136,10 +136,10 @@ int	ft_contains_nl(char *str)
 	while (str[i] != 0)
 	{
 		if (str[i] == '\n')
-			return (i);
+			return (1);
 		i++;
 	}
-	return (-1);
+	return (0);
 }
 
 char	*get_next_line(int fd)
@@ -158,7 +158,7 @@ char	*get_next_line(int fd)
 	}
 	// if(buff == NULL)
 	// 	return (NULL);
-	if (ft_contains_nl(buff) != -1)
+	if (!ft_contains_nl(buff))
 	{
 		if(read(fd, buff, BUFFER_SIZE) <= 0)
 		{
@@ -169,7 +169,7 @@ char	*get_next_line(int fd)
 		str = ft_str(fd, buff, NULL, (int)BUFFER_SIZE);
 	}
 	else
-		str = ft_str(fd, buff, NULL, (int)ft_strlen(buff) - ft_contains_nl(buff));
+		str = ft_str(fd, buff, NULL, (int)ft_strlen(buff));
 	if (str == NULL)
 	{
 		free(buff);

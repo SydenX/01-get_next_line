@@ -84,19 +84,17 @@ char	*ft_str(int fd, char *buff, char *str, int start)
 {
 	static int 	j = 0;
 	int			i;
-	// int			red;
 
 	i = 0;
 	// printf("%d\n", start);
 	// if (ft_readline(fd, buff) == -1)
 	// 	return (NULL);
-	//printf("%s", buff);
-	// if(buff[0] == 0)
-	// {
-	// 	if(read(fd, buff, BUFFER_SIZE) <= 0)
-	// 		return (NULL);
-	// 	red = 1;
-	// }
+	//printf("%");
+	if(start == (int)BUFFER_SIZE)
+	{
+		if(read(fd, buff, BUFFER_SIZE) <= 0)
+			return (NULL);
+	}
 	while (buff[i] != 0 && buff[i] != '\n')
 		i++;
 	if (str == NULL)
@@ -109,7 +107,7 @@ char	*ft_str(int fd, char *buff, char *str, int start)
 	}
 	// printf("%s\n", str);
 	// printf("%s\n", buff);
-	str = ft_strjoin(str, buff, i);
+	str = ft_strjoin(str, buff, i + 1);
 	//ft_strlcpy(str, buff, i + 1);
 	j++;
 	//printf("%c", buff[i]);
@@ -117,29 +115,10 @@ char	*ft_str(int fd, char *buff, char *str, int start)
 		return (str);
 	// else if (ft_readline(fd, buff) != -1)
 	// 	ft_str(fd, buff, str, start + BUFFER_SIZE);
-	// else if (red != 1)
-	// {
-		if (read(fd, buff, BUFFER_SIZE) <= 0)
-			return (NULL);
-		else
-			return (ft_str(fd, buff, str, start + BUFFER_SIZE));	
-	// }
-	// else
-		// return (ft_str(fd, buff, str, start + BUFFER_SIZE));
-}
-
-int	ft_contains_nl(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] != 0)
-	{
-		if (str[i] == '\n')
-			return (i);
-		i++;
-	}
-	return (-1);
+	// else if (read(fd, buff, BUFFER_SIZE) <= 0)
+	// 	return (NULL);
+	else
+		return (ft_str(fd, buff, str, start + BUFFER_SIZE));
 }
 
 char	*get_next_line(int fd)
@@ -158,18 +137,13 @@ char	*get_next_line(int fd)
 	}
 	// if(buff == NULL)
 	// 	return (NULL);
-	if (ft_contains_nl(buff) != -1)
-	{
-		if(read(fd, buff, BUFFER_SIZE) <= 0)
-		{
-			free(buff);
-			buff = NULL;
-			return (NULL);
-		}
-		str = ft_str(fd, buff, NULL, (int)BUFFER_SIZE);
-	}
-	else
-		str = ft_str(fd, buff, NULL, (int)ft_strlen(buff) - ft_contains_nl(buff));
+	// if(read(fd, buff, BUFFER_SIZE) <= 0)
+	// {
+	// 	free(buff);
+	// 	buff = NULL;
+	// 	return (NULL);
+	// }
+	str = ft_str(fd, buff, NULL, BUFFER_SIZE);
 	if (str == NULL)
 	{
 		free(buff);

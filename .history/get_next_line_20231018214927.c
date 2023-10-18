@@ -250,7 +250,7 @@ char	*get_next_line(int fd)
 int	main(int argc, char *argv[]){
 	int	fd = open(argv[1], O_RDONLY, 0);
 	int i = 0;
-	while (i < 2){
+	while (i < 1){
 		printf("%s", get_next_line(fd));
 		i++;
 	}
