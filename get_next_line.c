@@ -25,35 +25,6 @@ int	ft_file_check(int fd, char *buff)
 	return (1);
 }
 
-char	*ft_str(int fd, char *buff, char *str, int first)
-{
-	int		i;
-	
-	i = first;
-	if (buff[i] == '\n')
-		i++;
-	if (buff[i] == 0)
-		read(fd, buff, BUFFER_SIZE);
-	while (buff[i] != '\n' && buff[i] != 0)
-		i++;
-	//printf("-%c", buff[first]);
-	if (str == NULL)
-	{
-		str = malloc(1);
-		if (str == NULL)
-			return (NULL);
-		str[0] = 0;
-	}
-	str = ft_strjoin(str, ft_substr(buff, 0, i));
-	//printf("\n-%s\n\n", buff);
-	if (buff[i] == 0)
-	{
-		buff[0] = 0;
-		return (ft_str(fd, buff, str, 0));
-	}
-	return (str);
-}
-
 char	*ft_strchr(const char *s, int c)
 {
 	char	*copy;
@@ -70,7 +41,39 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-int	ft_getn(char *s)
+char	*ft_str(int fd, char *buff, char *str, int first)
+{
+	int		i;
+	
+	i = first;
+	if (buff[i] == '\n')
+		i++;
+	if (buff[i] == 0){
+		printf("Reading.");
+		read(fd, buff, BUFFER_SIZE);
+	}
+	while (buff[i] != '\n' && buff[i] != 0)
+		i++;
+	//printf("-%c", buff[first]);
+	if (str == NULL)
+	{
+		str = malloc(1);
+		if (str == NULL)
+			return (NULL);
+		str[0] = 0;
+	}
+	printf("%d %d\n", first, i);
+	str = ft_strjoin(str, ft_substr(buff, first, i - first + 1));
+	//printf("\n-%s\n\n", buff);
+	if (buff[i] == 0)
+	{
+		buff[0] = 0;
+		return (ft_str(fd, buff, str, 0));
+	}
+	return (str);
+}
+
+int	ft_getn(char *buff)
 {
 	int	i;
 	int	n;
@@ -79,10 +82,10 @@ int	ft_getn(char *s)
 	firstn = 0;
 	n = 0;
 	i = 1;
-	while (s[i] != 0)
+	while (buff[i] != 0)
 	{
-		if (s[i] == '\n')
-			return (i);
+		if (buff[i] == '\n')
+			return (i + 1);
 		i++;
 	}
 	return (0);
@@ -101,10 +104,11 @@ char	*get_next_line(int fd)
 		if (buff == NULL)
 			return (NULL);
 		buff[BUFFER_SIZE] = 0;
+		str = ft_str(fd, buff, NULL, 0);
 	}
-	//printf("%d", ft_getn(buff));
+	else
+		str = ft_str(fd, buff, NULL, ft_getn(buff));
 	//printf("-%s-", buff);
-	str = ft_str(fd, buff, NULL, ft_getn(buff));
 	if (str == NULL)
 	{
 		free(buff);
@@ -118,7 +122,7 @@ char	*get_next_line(int fd)
 int	main(int argc, char *argv[]){
 	int	fd = open(argv[1], O_RDONLY, 0);
 	int i = 0;
-	while (i < 2){
+	while (i < 10){
 		printf("%s", get_next_line(fd));
 		i++;
 	}

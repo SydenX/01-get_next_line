@@ -72,6 +72,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 	if (str == NULL)
 		return (NULL);
 	ft_strlcpy(str, &s[start], (int)len + 1);
+	//printf("->%d\n", (int)len);
 	return (str);
 }
 
