@@ -25,70 +25,65 @@ int	ft_file_check(int fd, char *buff)
 	return (1);
 }
 
-char	*ft_strchr(const char *s, int c)
+int	ft_strchr(const char *s, int c)
 {
 	char	*copy;
+	int		i;
 
+	i = 0;
 	copy = (char *) s;
 	while (*copy != 0)
 	{
 		if (*copy == (char)c)
-			return (copy);
+			return (i);
 		copy++;
+		i++;
 	}
 	if (*copy == (char)c)
-		return (copy);
-	return (NULL);
+		return (i);
+	return (-1);
 }
 
-char	*ft_str(int fd, char *buff, char *str, int first)
+char	*ft_str(int fd, char *buff, int first)
 {
-	int		i;
-	
-	i = first;
-	if (buff[i] == '\n')
-		i++;
-	if (buff[i] == 0){
-		printf("Reading.");
+	char	*str;
+	char	*tmp;
+
+	tmp = ft_strdup("");
+	if (tmp == NULL)
+		return (NULL);
+	while (ft_strchr(buff + first, '\n') == -1)
+	{
+		str = ft_strdup(tmp);
+		if (str == NULL)
+		{
+			free(tmp);
+			return (NULL);
+		}
+		tmp = ft_strjoin(str, ft_substr(buff + first, 0, ft_strlen(buff) + 1));
+		free(str);
+		if (tmp == NULL)
+			return (NULL);
+		first = 0;
 		read(fd, buff, BUFFER_SIZE);
 	}
-	while (buff[i] != '\n' && buff[i] != 0)
-		i++;
-	//printf("-%c", buff[first]);
+
+	str = ft_strdup(tmp);
 	if (str == NULL)
 	{
-		str = malloc(1);
-		if (str == NULL)
-			return (NULL);
-		str[0] = 0;
+		free(tmp);
+		return (NULL);
 	}
-	printf("%d %d\n", first, i);
-	str = ft_strjoin(str, ft_substr(buff, first, i - first + 1));
-	//printf("\n-%s\n\n", buff);
-	if (buff[i] == 0)
-	{
-		buff[0] = 0;
-		return (ft_str(fd, buff, str, 0));
-	}
+	tmp = ft_strjoin(str, ft_substr(buff, 0, ft_strchr(buff, '\n') + 1));
+	free(str);
+	if (tmp == NULL)
+		return (NULL);
+
+	str = ft_strdup(tmp);
+	free(tmp);
+	if (str == NULL)
+		return (NULL);
 	return (str);
-}
-
-int	ft_getn(char *buff)
-{
-	int	i;
-	int	n;
-	int	firstn;
-
-	firstn = 0;
-	n = 0;
-	i = 1;
-	while (buff[i] != 0)
-	{
-		if (buff[i] == '\n')
-			return (i + 1);
-		i++;
-	}
-	return (0);
 }
 
 char	*get_next_line(int fd)
@@ -104,15 +99,14 @@ char	*get_next_line(int fd)
 		if (buff == NULL)
 			return (NULL);
 		buff[BUFFER_SIZE] = 0;
-		str = ft_str(fd, buff, NULL, 0);
+		read(fd, buff, BUFFER_SIZE);
+		str = ft_str(fd, buff, 0);
 	}
 	else
-		str = ft_str(fd, buff, NULL, ft_getn(buff));
-	//printf("-%s-", buff);
+		str = ft_str(fd, buff, ft_strchr(buff, '\n') + 1);
 	if (str == NULL)
 	{
 		free(buff);
-		buff = NULL;
 		return (NULL);
 	}
 	return (str);

@@ -23,6 +23,23 @@ size_t	ft_strlen(const char *s)
 	return (ln);
 }
 
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	int	i;
+
+	i = 0;
+	if (dst[0] == 0 && src[0] == 0)
+		return (0);
+	while ((size_t)(i + 1) < (dstsize) && src[i] != 0)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	if (dstsize != 0)
+		dst[i] = 0;
+	return (ft_strlen(src));
+}
+
 char	*ft_strdup(const char *s)
 {
 	char	*copy;
@@ -41,22 +58,6 @@ char	*ft_strdup(const char *s)
 	return (copy);
 }
 
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
-{
-	int	i;
-
-	i = 0;
-	if (dst == NULL || src == NULL)
-		return (0);
-	while (i < ((int)dstsize - 1) && src[i] != 0)
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	if (dstsize != 0)
-		dst[i] = 0;
-	return (ft_strlen(src));
-}
 
 char	*ft_substr(const char *s, unsigned int start, size_t len)
 {
@@ -72,7 +73,6 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 	if (str == NULL)
 		return (NULL);
 	ft_strlcpy(str, &s[start], (int)len + 1);
-	//printf("->%d\n", (int)len);
 	return (str);
 }
 
@@ -98,7 +98,5 @@ char	*ft_strjoin(const char *s1, const char *s2)
 		j++;
 	}
 	str[i + j] = 0;
-	//free((void *)s1);
-	//free((void *)s2);
 	return (str);
 }
