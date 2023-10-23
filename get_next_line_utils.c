@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jtollena <jtollena@student.s19.be>         +#+  +:+       +#+        */
+/*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 12:06:08 by jtollena          #+#    #+#             */
-/*   Updated: 2023/10/17 12:06:10 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/10/23 15:17:39 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,10 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 	i = 0;
 	if (dst[0] == 0 && src[0] == 0)
 		return (0);
-	while ((size_t)(i + 1) < (dstsize) && src[i] != 0)
+	while ((size_t)(i + 1) < (dstsize) && 
+		((src[i] >= 32 && src[i] <= 126)
+		|| src[i] == '\n'
+		|| (src[i] >= 9 && src[i] <= 13)))
 	{
 		dst[i] = src[i];
 		i++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jtollena <jtollena@student.s19.be>         +#+  +:+       +#+        */
+/*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 10:39:41 by jtollena          #+#    #+#             */
-/*   Updated: 2023/10/17 10:52:29 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/10/23 15:21:15 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,17 @@ int	ft_file_check(int fd, char *buff)
 	return (1);
 }
 
-void	*ft_memcpy(void *dst, const void *src, size_t n)
+void	ft_bzero(void *s, size_t n)
 {
-	const unsigned char	*srccpy;
-	unsigned char		*copy;
+	unsigned char	*copy;
 
-	copy = dst;
-	srccpy = src;
-	if (dst == NULL && src == NULL)
-		return (0);
+	copy = s;
 	while (n > 0)
 	{
-		*copy = *srccpy;
-		srccpy++;
+		*copy = 0;
 		copy++;
 		n--;
 	}
-	return (dst);
 }
 
 int	ft_strchr(const char *s, int c)
@@ -55,7 +49,7 @@ int	ft_strchr(const char *s, int c)
 		return (-1);
 	while (copy[i] != 0)
 	{
-		if (copy[i] == (char)c)
+		if (copy[i] == (unsigned char)c)
 			return (i);
 		i++;
 	}
@@ -64,16 +58,27 @@ int	ft_strchr(const char *s, int c)
 	return (-1);
 }
 
-char	*ft_ft(char *tmp, char *buff, int maxsub)
+char	*ft_subbuff(char *tmp, char *buff, int maxsub)
 {
 	char	*str;
 	char	*substr;
+	char	*buffcpy;
 
+	buffcpy = ft_strdup(buff);
+	if (buffcpy == NULL)
+		return (NULL);
+	ft_bzero(buff, BUFFER_SIZE + 1);
 	str = ft_strdup(tmp);
 	if (str == NULL)
+	{
+		free(buffcpy);
 		return (NULL);
+	}
 	free(tmp);
-	substr = ft_substr(buff, 0, maxsub);
+	printf("%d-", maxsub);
+	substr = ft_substr(buffcpy, 0, maxsub);
+	ft_strlcpy(buff, buffcpy, BUFFER_SIZE - maxsub + 1);
+	free(buffcpy);
 	if (substr == NULL)
 	{
 		free(str);
@@ -90,61 +95,24 @@ char	*ft_ft(char *tmp, char *buff, int maxsub)
 
 char	*ft_str(int fd, char *buff)
 {
-	// char	*str;
 	char	*tmp;
-	// char	*substr;
+	int		red;
 
 	tmp = ft_strdup("");
 	if (tmp == NULL)
 		return (NULL);
 	while (ft_strchr(buff, '\n') == -1)
 	{
-		tmp = ft_ft(tmp, buff, ft_strlen(buff) + 1);
-		// str = ft_strdup(tmp);
-		// if (str == NULL)
-		// {
-		// 	free(tmp);
-		// 	return (NULL);
-		// }
-
-		// substr = ft_substr(buff, 0, ft_strlen(buff) + 1);
-		// if (substr == NULL)
-		// {
-		// 	free(str);
-		// 	free(tmp);
-		// 	return (NULL);
-		// }
-		// if (tmp[0] == 0)
-		// 	free(tmp);
-		// tmp = ft_strjoin(str, substr);
-		// free(substr);
-		// free(str);
-		// if (tmp == NULL)
-		// 	return (NULL);
-		if(read(fd, buff, BUFFER_SIZE) <= 0)
+		tmp = ft_subbuff(tmp, buff, ft_strlen(buff));
+		red = read(fd, buff, BUFFER_SIZE);
+		if(red <= 0)
 		{
-			free(buff);
+			printf("-%s-", buff);
 			buff = NULL;
 			return (tmp);
 		}
 	}
-	tmp = ft_ft(tmp, buff, ft_strchr(buff, '\n') + 1);
-	//printf("%s", buff);
-	// str = ft_strdup(tmp);
-	// if (str == NULL)
-	// {
-	// 	free(tmp);
-	// 	return (NULL);
-	// }
-
-	// tmp = ft_strjoin(str, ft_substr(buff, 0, ft_strchr(buff, '\n') + 1));
-	// free(str);
-	// if (tmp == NULL)
-	// 	return (NULL);
-	// str = ft_strdup(tmp);
-	// free(tmp);
-	// if (str == NULL)
-	// 	return (NULL);
+	tmp = ft_subbuff(tmp, buff, ft_strchr(buff, '\n') + 1);
 	return (tmp);
 }
 
@@ -152,10 +120,11 @@ char	*get_next_line(int fd)
 {
 	static char	*buff = 0;
 	char		*str;
+	int			i;
 
 	if (!ft_file_check(fd, buff))
 		return (NULL);
-	if(buff == 0)
+	if (buff == 0)
 	{
 		buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
 		if (buff == NULL)
@@ -169,32 +138,30 @@ char	*get_next_line(int fd)
 		}
 		str = ft_str(fd, buff);
 	}
-	else
+	else if (buff != NULL)
 		str = ft_str(fd, buff);
-	if(buff == NULL)
+	if (buff == NULL)
 		return (NULL);
 	if (str == NULL || str[0] == 0)
 	{
 		if(str[0] == 0)
 			free(str);
-		free(buff);
+		if (buff != NULL)
+			free(buff);
 		buff = NULL;
 		return (NULL);
 	}
-	if (buff == NULL)
-	{
-		free(buff);
-		buff = NULL;
-		return (0);
-	}
-	else if(ft_strchr(buff, '\n') == -1)
+	if (ft_strchr(buff, '\n') == -1)
 	{
 		free(buff);
 		buff = NULL;
 		return (str);
 	}
 	else
-		ft_memcpy(buff, &buff[ft_strchr(buff, '\n') + 1], ft_strlen(&buff[ft_strchr(buff, '\n') + 1]) + 1);
+	{
+		i = ft_strchr(buff, '\n') + 1;
+		ft_strlcpy(buff, &buff[i], ft_strlen(&buff[i]) + 1);
+	}
 	return (str);
 }
 
@@ -202,7 +169,7 @@ char	*get_next_line(int fd)
 int	main(int argc, char *argv[]){
 	int	fd = open(argv[1], O_RDONLY, 0);
 	int i = 0;
-	while (i < 10){
+	while (i < 12){
 		printf("%s", get_next_line(fd));
 		i++;
 	}
