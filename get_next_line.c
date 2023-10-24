@@ -6,7 +6,7 @@
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 10:39:41 by jtollena          #+#    #+#             */
-/*   Updated: 2023/10/23 15:21:15 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/10/24 09:46:34 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,23 +62,22 @@ char	*ft_subbuff(char *tmp, char *buff, int maxsub)
 {
 	char	*str;
 	char	*substr;
-	char	*buffcpy;
+	// char	*buffcpy;
 
-	buffcpy = ft_strdup(buff);
-	if (buffcpy == NULL)
-		return (NULL);
-	ft_bzero(buff, BUFFER_SIZE + 1);
+	// buffcpy = ft_strdup(buff);
+	// if (buffcpy == NULL)
+	// 	return (NULL);
+	// ft_bzero(buff, BUFFER_SIZE + 1);
 	str = ft_strdup(tmp);
 	if (str == NULL)
 	{
-		free(buffcpy);
+		free(buff);
 		return (NULL);
 	}
 	free(tmp);
-	printf("%d-", maxsub);
-	substr = ft_substr(buffcpy, 0, maxsub);
-	ft_strlcpy(buff, buffcpy, BUFFER_SIZE - maxsub + 1);
-	free(buffcpy);
+	substr = ft_substr(buff, 0, maxsub);
+	// ft_strlcpy(buff, buffcpy, BUFFER_SIZE - maxsub + 1);
+	// free(buffcpy);
 	if (substr == NULL)
 	{
 		free(str);
@@ -107,8 +106,8 @@ char	*ft_str(int fd, char *buff)
 		red = read(fd, buff, BUFFER_SIZE);
 		if(red <= 0)
 		{
-			printf("-%s-", buff);
-			buff = NULL;
+			// printf("-%s-", buff);
+			// buff = NULL;
 			return (tmp);
 		}
 	}
@@ -160,18 +159,18 @@ char	*get_next_line(int fd)
 	else
 	{
 		i = ft_strchr(buff, '\n') + 1;
-		ft_strlcpy(buff, &buff[i], ft_strlen(&buff[i]) + 1);
+		ft_strlcpy(buff, &buff[i], ft_strlen(buff) + 1);
 	}
 	return (str);
 }
 
-#include <stdio.h>
-int	main(int argc, char *argv[]){
-	int	fd = open(argv[1], O_RDONLY, 0);
-	int i = 0;
-	while (i < 12){
-		printf("%s", get_next_line(fd));
-		i++;
-	}
-	return (argc);
-}
+// #include <stdio.h>
+// int	main(int argc, char *argv[]){
+// 	int	fd = open(argv[1], O_RDONLY, 0);
+// 	int i = 0;
+// 	while (i < 12){
+// 		printf("%s", get_next_line(fd));
+// 		i++;
+// 	}
+// 	return (argc);
+// }
