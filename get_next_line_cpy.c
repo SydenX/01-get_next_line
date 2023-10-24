@@ -6,17 +6,22 @@
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 10:39:41 by jtollena          #+#    #+#             */
-/*   Updated: 2023/10/24 11:49:16 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/10/24 11:28:47 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "get_next_line.h"
 
-int	ft_file_check(int fd)
+int	ft_file_check(int fd, char *buff)
 {
 	if (fd == -1)
+	{
+		if (buff != 0)
+			free(buff);
+		buff = NULL;
 		return (0);
+	}
 	return (1);
 }
 
@@ -40,6 +45,40 @@ int	ft_strchr(const char *s, int c)
 	return (-1);
 }
 
+char	*ft_subbuff(char *tmp, char *buff, int maxsub)
+{
+	char	*str;
+	char	*substr;
+	// char	*buffcpy;
+
+	// buffcpy = ft_strdup(buff);
+	// if (buffcpy == NULL)
+	// 	return (NULL);
+	// ft_bzero(buff, BUFFER_SIZE + 1);
+	str = ft_strdup(tmp);
+	if (str == NULL)
+	{
+		free(buff);
+		return (NULL);
+	}
+	free(tmp);
+	substr = ft_substr(buff, 0, maxsub);
+	// ft_strlcpy(buff, buffcpy, BUFFER_SIZE - maxsub + 1);
+	// free(buffcpy);
+	if (substr == NULL)
+	{
+		free(str);
+		free(tmp);
+		return (NULL);
+	}
+	tmp = ft_strjoin(str, substr);
+	free(substr);
+	free(str);
+	if (tmp == NULL)
+		return (NULL);
+	return (tmp);
+}
+
 char	*ft_str(int fd, char *buff)
 {
 	char	*tmp;
@@ -53,60 +92,61 @@ char	*ft_str(int fd, char *buff)
 		tmp = ft_subbuff(tmp, buff, ft_strlen(buff));
 		red = read(fd, buff, BUFFER_SIZE);
 		if(red <= 0)
+		{
+			// printf("-%s-", buff);
+			// buff = NULL;
 			return (tmp);
+		}
 	}
 	tmp = ft_subbuff(tmp, buff, ft_strchr(buff, '\n') + 1);
 	return (tmp);
 }
 
-char	*ft_getline(int fd, char *str)
-{
-	int		i;
-	int		j;
-	char	*buff;
-	char	*newstr;
-
-	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (buff == NULL)
-		return (NULL);
-	if(read(fd, buff, BUFFER_SIZE) <= 0)
-		return (str);
-	while (buff[i] == str[i])
-		i++;
-	j = i;
-	while (buff[i] != 0 && buff[i] != '\n')
-		i++;
-	newstr = malloc((i - j) * sizeof(char));
-	if (newstr == NULL)
-	{
-		free(buff);
-		return (NULL);
-	}
-	ft_strlcpy(newstr, &buff[j], j - i);
-	return (newstr);
-}
-
 char	*get_next_line(int fd)
 {
-	static char		*str;
-	int				i;
-	char			*eline;
-	char			*newstr;
+	static char	*buff = 0;
+	char		*str;
+	int			i;
 
-	if (!ft_file_check(fd))
+	if (!ft_file_check(fd, buff))
 		return (NULL);
-	newstr = ft_getline(fd, str);
-	if (newstr == NULL)
+	if (buff == 0)
 	{
-		free(str);
+		buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
+		if (buff == NULL)
+			return (NULL);
+		buff[BUFFER_SIZE] = 0;
+		if(read(fd, buff, BUFFER_SIZE) <= 0)
+		{
+			free(buff);
+			buff = NULL;
+			return (NULL);
+		}
+		str = ft_str(fd, buff);
+	}
+	else if (buff != NULL)
+		str = ft_str(fd, buff);
+	if (buff == NULL)
+		return (NULL);
+	if (str == NULL || str[0] == 0)
+	{
+		if(str[0] == 0)
+			free(str);
+		if (buff != NULL)
+			free(buff);
+		buff = NULL;
 		return (NULL);
 	}
-	eline = ft_strjoin(str, newstr);
-	if (eline == NULL)
+	if (ft_strchr(buff, '\n') == -1)
 	{
-		free(newstr);
-		free(str);
-		return (NULL);
+		free(buff);
+		buff = NULL;
+		return (str);
+	}
+	else
+	{
+		i = ft_strchr(buff, '\n') + 1;
+		ft_strlcpy(buff, &buff[i], ft_strlen(buff) + 1);
 	}
 	return (str);
 }
