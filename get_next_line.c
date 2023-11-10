@@ -6,7 +6,7 @@
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 10:39:41 by jtollena          #+#    #+#             */
-/*   Updated: 2023/10/24 11:49:16 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/11/10 14:26:22 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,26 +40,7 @@ int	ft_strchr(const char *s, int c)
 	return (-1);
 }
 
-char	*ft_str(int fd, char *buff)
-{
-	char	*tmp;
-	int		red;
-
-	tmp = ft_strdup("");
-	if (tmp == NULL)
-		return (NULL);
-	while (ft_strchr(buff, '\n') == -1)
-	{
-		tmp = ft_subbuff(tmp, buff, ft_strlen(buff));
-		red = read(fd, buff, BUFFER_SIZE);
-		if(red <= 0)
-			return (tmp);
-	}
-	tmp = ft_subbuff(tmp, buff, ft_strchr(buff, '\n') + 1);
-	return (tmp);
-}
-
-char	*ft_getline(int fd, char *str)
+char	*ft_getline(int fd, char **str)
 {
 	int		i;
 	int		j;
@@ -69,55 +50,90 @@ char	*ft_getline(int fd, char *str)
 	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (buff == NULL)
 		return (NULL);
-	if(read(fd, buff, BUFFER_SIZE) <= 0)
-		return (str);
-	while (buff[i] == str[i])
-		i++;
+	buff[BUFFER_SIZE] = 0;
+	if(read(fd, buff, BUFFER_SIZE) < 0)
+	{
+		free(buff);
+		return (*str);
+	}
+	i = 0;
 	j = i;
-	while (buff[i] != 0 && buff[i] != '\n')
-		i++;
-	newstr = malloc((i - j) * sizeof(char));
+	while (buff[i] != 0)
+	{
+		if (buff[i++] == '\n')
+			break ;
+	}
+	newstr = malloc((ft_strlen(*str) + i - j + 1) * sizeof(char));
 	if (newstr == NULL)
 	{
 		free(buff);
 		return (NULL);
 	}
-	ft_strlcpy(newstr, &buff[j], j - i);
+	printf("-> %s\n", *str);
+	ft_strlcpy(newstr, &buff[j], i - j);
+
+	if ((i == BUFFER_SIZE && buff[i - 1] != '\n'))
+		newstr = ft_strjoin(newstr, ft_getline(fd, NULL));
+
+	free(*str);
+	*str = malloc((ft_strlen(&buff[i]) + 1) * sizeof(char));
+	if (*str == NULL)
+	{
+		free(buff);
+		free(newstr);
+		return (NULL);
+	}
+	ft_strlcpy(*str, &buff[i], ft_strlen(&buff[i]));
+	
+	free(buff);
 	return (newstr);
 }
 
 char	*get_next_line(int fd)
 {
-	static char		*str;
+	static char		*str[1025];
 	int				i;
 	char			*eline;
 	char			*newstr;
+	char			*tmp;
 
 	if (!ft_file_check(fd))
 		return (NULL);
-	newstr = ft_getline(fd, str);
-	if (newstr == NULL)
+	printf("%s", str[fd]);
+	tmp = ft_strdup(str[fd]);
+	if (!tmp)
 	{
 		free(str);
 		return (NULL);
 	}
-	eline = ft_strjoin(str, newstr);
+	newstr = ft_getline(fd, &str[fd]);
+	if (newstr == NULL)
+	{
+		free(str);
+		free(tmp);
+		return (NULL);
+	}
+	if (tmp)
+		eline = ft_strjoin(tmp, newstr);
+	else
+		return (newstr);
 	if (eline == NULL)
 	{
+		free(tmp);
 		free(newstr);
 		free(str);
 		return (NULL);
 	}
-	return (str);
+	return (eline);
 }
 
-// #include <stdio.h>
-// int	main(int argc, char *argv[]){
-// 	int	fd = open(argv[1], O_RDONLY, 0);
-// 	int i = 0;
-// 	while (i < 12){
-// 		printf("%s", get_next_line(fd));
-// 		i++;
-// 	}
-// 	return (argc);
-// }
+#include <stdio.h>
+int	main(int argc, char *argv[]){
+	int	fd = open(argv[1], O_RDONLY, 0);
+	int i = 0;
+	while (i < 2){
+		printf("%s", get_next_line(fd));
+		i++;
+	}
+	return (argc);
+}
