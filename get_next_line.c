@@ -6,7 +6,7 @@
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 10:39:41 by jtollena          #+#    #+#             */
-/*   Updated: 2023/11/10 14:26:22 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/11/10 16:22:46 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	ft_strchr(const char *s, int c)
 	return (-1);
 }
 
-char	*ft_getline(int fd, char **str)
+char	*ft_getline(int fd, char *str)
 {
 	int		i;
 	int		j;
@@ -54,7 +54,7 @@ char	*ft_getline(int fd, char **str)
 	if(read(fd, buff, BUFFER_SIZE) < 0)
 	{
 		free(buff);
-		return (*str);
+		return (str);
 	}
 	i = 0;
 	j = i;
@@ -63,27 +63,28 @@ char	*ft_getline(int fd, char **str)
 		if (buff[i++] == '\n')
 			break ;
 	}
-	newstr = malloc((ft_strlen(*str) + i - j + 1) * sizeof(char));
+	newstr = malloc((ft_strlen(str) + i - j + 1) * sizeof(char));
 	if (newstr == NULL)
 	{
 		free(buff);
 		return (NULL);
 	}
-	printf("-> %s\n", *str);
 	ft_strlcpy(newstr, &buff[j], i - j);
 
 	if ((i == BUFFER_SIZE && buff[i - 1] != '\n'))
-		newstr = ft_strjoin(newstr, ft_getline(fd, NULL));
+		return (ft_strjoin(newstr, ft_getline(fd, NULL)));
 
-	free(*str);
-	*str = malloc((ft_strlen(&buff[i]) + 1) * sizeof(char));
-	if (*str == NULL)
+	printf("-> %s\n", str);
+	newstr = ft_strjoin(str, newstr);
+	free(str);
+	str = malloc((ft_strlen(&buff[i]) + 1) * sizeof(char));
+	if (str == NULL)
 	{
 		free(buff);
 		free(newstr);
 		return (NULL);
 	}
-	ft_strlcpy(*str, &buff[i], ft_strlen(&buff[i]));
+	ft_strlcpy(str, &buff[i], ft_strlen(&buff[i]));
 	
 	free(buff);
 	return (newstr);
@@ -92,39 +93,23 @@ char	*ft_getline(int fd, char **str)
 char	*get_next_line(int fd)
 {
 	static char		*str[1025];
-	int				i;
 	char			*eline;
 	char			*newstr;
-	char			*tmp;
 
 	if (!ft_file_check(fd))
 		return (NULL);
-	printf("%s", str[fd]);
-	tmp = ft_strdup(str[fd]);
-	if (!tmp)
-	{
-		free(str);
-		return (NULL);
-	}
-	newstr = ft_getline(fd, &str[fd]);
+		
+	printf("%s\n", str[fd]);
+	if (!str[fd])
+		str[fd] = ft_strdup("ah");
+	newstr = ft_getline(fd, str[fd]);
 	if (newstr == NULL)
 	{
-		free(str);
-		free(tmp);
+		free(str[fd]);
 		return (NULL);
 	}
-	if (tmp)
-		eline = ft_strjoin(tmp, newstr);
-	else
-		return (newstr);
-	if (eline == NULL)
-	{
-		free(tmp);
-		free(newstr);
-		free(str);
-		return (NULL);
-	}
-	return (eline);
+	return (newstr);
+	// return (ft_strdup(""));
 }
 
 #include <stdio.h>
