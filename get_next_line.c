@@ -6,7 +6,7 @@
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 10:39:41 by jtollena          #+#    #+#             */
-/*   Updated: 2023/11/13 12:39:18 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/11/13 14:23:09 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,13 +152,13 @@ char	*get_next_line(int fd)
 	// return (ft_strdup(""));
 }
 
-// #include <stdio.h>
-// int	main(int argc, char *argv[]){
-// 	int	fd = open(argv[1], O_RDONLY, 0);
-// 	int i = 0;
-// 	while (i < 2){
-// 		printf("%s", get_next_line(fd));
-// 		i++;
-// 	}
-// 	return (argc);
-// }
+#include <stdio.h>
+int	main(int argc, char *argv[]){
+	int	fd = open(argv[1], O_RDONLY, 0);
+	int i = 0;
+	while (i < 2){
+		printf("%s", get_next_line(fd));
+		i++;
+	}
+	return (argc);
+}
