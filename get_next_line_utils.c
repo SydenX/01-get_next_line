@@ -6,7 +6,7 @@
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 12:06:08 by jtollena          #+#    #+#             */
-/*   Updated: 2023/11/10 16:19:27 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/11/13 12:41:50 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,15 +50,17 @@ char	*ft_strdup(const char *s)
 	char	*copy;
 	int		i;
 
+	if (!s)
+		return (NULL);
 	copy = malloc((ft_strlen(s) + 1) * sizeof(char));
 	if (copy == NULL)
 		return (NULL);
 	i = 0;
-	if (!s)
-	{
-		copy[0] = 0;
-		return (copy);
-	}
+	// if (!s)
+	// {
+	// 	copy[0] = 0;
+	// 	return (copy);
+	// }
 	while (s[i] != 0)
 	{
 		copy[i] = s[i];
@@ -92,6 +94,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		i;
 	int		j;
 
+	if (!s1 && !s2)
+		return (NULL);
 	if (!s1)
 		return (s2);
 	if (!s2)
@@ -111,6 +115,8 @@ char	*ft_strjoin(char *s1, char *s2)
 		str[i + j] = s2[j];
 		j++;
 	}
+	if (ft_strlen(s1) == 0)
+		free(s1);
 	str[i + j] = 0;
 	return (str);
 }
