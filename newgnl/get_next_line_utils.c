@@ -6,7 +6,7 @@
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:19:00 by jtollena          #+#    #+#             */
-/*   Updated: 2023/11/13 14:21:37 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/11/13 15:16:53 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,8 +148,8 @@ char	*ft_strjoin(char *s1, char *s2)
 		str[i + j] = s2[j];
 		j++;
 	}
-	if (ft_strlen(s1) == 0)
-		free(s1);
+	free(s1);
+	// free(s2);
 	str[i + j] = 0;
 	return (str);
 }
