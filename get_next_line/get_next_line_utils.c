@@ -6,47 +6,11 @@
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:19:00 by jtollena          #+#    #+#             */
-/*   Updated: 2023/11/13 15:16:53 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/11/16 10:47:54 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-size_t	ft_strlen(const char *s)
-{
-	size_t	ln;
-
-	if (!s)
-		return (0);
-	ln = 0;
-	while (s[ln] != 0)
-		ln++;
-	return (ln);
-}
-
-void	ft_bzero(void *s, size_t n)
-{
-	unsigned char	*copy;
-
-	copy = s;
-	while (n > 0)
-	{
-		*copy = 0;
-		copy++;
-		n--;
-	}
-}
-
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	void	*mem;
-
-	mem = malloc(nmemb * size);
-	if (mem == NULL)
-		return (NULL);
-	ft_bzero(mem, nmemb * size);
-	return (mem);
-}
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {
@@ -57,8 +21,8 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 		return (0);
 	while (i < dstsize && 
 		((src[i] >= 32 && src[i] <= 126)
-		|| src[i] == '\n'
-		|| (src[i] >= 9 && src[i] <= 13)))
+			|| src[i] == '\n'
+			|| (src[i] >= 9 && src[i] <= 13)))
 	{
 		dst[i] = src[i];
 		i++;
@@ -68,20 +32,22 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 	return (ft_strlen(src));
 }
 
-int	ft_strchr(const char *s, int c)
+char	*ft_strchr(char *s, int c)
 {
 	int		i;
 
 	i = 0;
 	if (!s)
-		return (-2);
+		return (0);
 	while (s[i] != 0)
 	{
 		if (s[i] == (char)c)
-			return (i);
+			return (&s[i]);
 		i++;
 	}
-	return (-1);
+	if (c == 0)
+		return (&s[ft_strlen(s)]);
+	return (0);
 }
 
 char	*ft_strdup(const char *s)
@@ -127,29 +93,20 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		i;
 	int		j;
 
-	if (!s1 && !s2)
+	if (!s1 || !s2)
 		return (NULL);
-	if (!s1)
-		return (s2);
-	if (!s2)
-		return (s1);
 	str = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (str == NULL)
-		return (NULL);
+		return (free(s1), free(s2), NULL);
 	j = 0;
 	i = 0;
-	while (s1[i] != 0)
-	{
-		str[i] = s1[i];
-		i++;
-	}
-	while (s2[j] != 0)
-	{
-		str[i + j] = s2[j];
-		j++;
-	}
+	while (*s1 != 0)
+		str[i++] = *s1++;
+	s1 -= i;
+	while (*s2 != 0)
+		str[i + j++] = *s2++;
+	s2 -= j;
+	str[ft_strlen(s1) + ft_strlen(s2)] = 0;
 	free(s1);
-	// free(s2);
-	str[i + j] = 0;
 	return (str);
 }

@@ -1,17 +1,113 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_cpy.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 10:39:41 by jtollena          #+#    #+#             */
-/*   Updated: 2023/10/24 11:28:47 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/11/16 10:31:56 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "get_next_line.h"
+
+// char	*ft_read(int fd, char **str)
+// {
+// 	char	*buff;
+// 	int		readable;
+
+// 	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
+// 	if (buff == NULL)
+// 		return (NULL);
+// 	readable = read(fd, buff, BUFFER_SIZE);
+// 	buff[BUFFER_SIZE] = 0;
+// 	if(readable < 0)
+// 	{
+// 		free(*str);
+// 		*str = NULL;
+// 		free(buff);
+// 		return (NULL);
+// 	} else if (readable == 0)
+// 	{
+// 		free(buff);
+// 		buff = ft_strdup("");
+// 		if (!buff)
+// 			return (NULL);
+// 	}
+// 	return (buff);
+// }
+
+// char	*ft_getline(char *s)
+// {
+// 	int		i;
+// 	char	*newline;
+
+// 	i = 0;
+// 	if (!s)
+// 		return (NULL);
+// 	while (s[i] != 0)
+// 	{
+// 		if (s[i++] == '\n')
+// 			break ;
+// 	}
+// 	newline = malloc((i + 1) * sizeof(char));
+// 	if (!newline)
+// 		return (NULL);
+// 	newline[i] = 0;
+// 	ft_strlcpy(newline, s, i);
+// 	return (newline);
+// }
+
+// char	*ft_newline(int fd, char **str)
+// {
+// 	char	*newstr;
+// 	char	*read;
+// 	char	*tmp;
+	
+// 	if (*str == NULL)
+// 	{
+// 		read = ft_read(fd, str);
+// 		if (read == NULL)
+// 			return (NULL);
+// 	}
+// 	else
+// 	{
+// 		read = ft_strdup(*str);
+// 		if (!read)
+// 			return (NULL);
+// 		free(*str);
+// 		*str = NULL;
+// 	}
+// 	newstr = ft_getline(read);
+// 	if (!newstr)
+// 		return (free(read), NULL);
+// 	while (ft_strchr(read, '\n') == -1)
+// 	{
+// 		free(read);
+// 		read = ft_read(fd, str);
+// 		if (read == NULL || strcmp(read, "") == 0)
+// 		{
+// 			free(*str);
+// 			*str = NULL;
+// 			if (read == NULL)
+// 				return (free(newstr), NULL);	
+// 			break ;
+// 		}
+// 		tmp = ft_getline(read);
+// 		newstr = ft_strjoin(newstr, tmp);
+// 		free(tmp);
+// 	}
+// 	if (ft_strchr(read, '\n') >= 0)
+// 		*str = ft_strdup(&read[ft_strchr(read, '\n') + 1]);
+// 	if (ft_strlen(newstr) == 0)
+// 	{
+// 		free(newstr);
+// 		return (free(read), NULL);
+// 	}
+// 	return (free(read), newstr);
+// }
 
 int	ft_file_check(int fd, char *buff)
 {
