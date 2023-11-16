@@ -6,7 +6,7 @@
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:18:44 by jtollena          #+#    #+#             */
-/*   Updated: 2023/11/16 11:46:37 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/11/16 11:58:30 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*ft_updatebuff(char *buff)
 	}
 	newbuff = malloc((ft_strlen(buff) - i) * sizeof(char));
 	if (newbuff == NULL)
-		return (free(buff), NULL);
+		return (NULL);
 	newbuff[ft_strlen(buff) - i - 1] = 0;
 	j = 0;
 	i++;
@@ -66,8 +66,13 @@ char	*ft_readbuff(char *buff)
 	if (buff[i] == '\n')
 		i++;
 	newline = malloc((i + 1) * sizeof(char));
-	if (newline == NULL)
-		{free(buff); buff = NULL; return (NULL);}
+	if (newline == NULL){
+		if (buff){
+			free(buff);
+			buff = NULL;
+		}
+		return (NULL);
+	}
 	i = 0;
 	while (buff[i] != 0 && buff[i] != '\n')
 	{
@@ -134,8 +139,7 @@ char	*get_next_line(int fd)
 	if (!buff[fd])
 		return (NULL);
 	newline = ft_readbuff(buff[fd]);
-	if(buff[fd] != NULL)
-		buff[fd] = ft_updatebuff(buff[fd]);
+	buff[fd] = ft_updatebuff(buff[fd]);
 	return (newline);
 }
 
