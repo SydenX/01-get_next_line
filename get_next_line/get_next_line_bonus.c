@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jtollena <jtollena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:18:44 by jtollena          #+#    #+#             */
-/*   Updated: 2023/11/16 14:41:26 by jtollena         ###   ########.fr       */
+/*   Updated: 2023/11/16 14:28:14 by jtollena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	ft_strlen(const char *s)
 {
@@ -140,9 +140,9 @@ char	*get_next_line(int fd)
 // #include <stdio.h>
 // int	main(int argc, char *argv[]){
 // 	int	fd = open(argv[1], O_RDONLY, 0);
-// 	// int	fd2 = open(argv[2], O_RDONLY, 0);
+// 	//int	fd2 = open(argv[2], O_RDONLY, 0);
 // 	int i = 0;
-// 	while (i < 10){
+// 	while (i < 2){
 // 		printf("%s", get_next_line(fd));
 // 		//printf("-%s\n", get_next_line(fd2));
 // 		i++;
